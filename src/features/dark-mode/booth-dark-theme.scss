@@ -1,0 +1,59 @@
+/**
+ * Booth Dark Theme - Filter Approach
+ *
+ * CSS filterを使用したシンプルで効果的なダークモード
+ */
+
+html[data-booth-theme="dark"] {
+  // 基本フィルター
+  filter: invert(90%) hue-rotate(180deg);
+  background-color: #111 !important;
+}
+
+// 画像・動画・キャンバスは再反転して元に戻す
+// html直下ではなく別セレクターで定義して詳細度を上げる
+// 注: 111.11% = 100 / 90 * 100 (親の90%反転を打ち消すため)
+html[data-booth-theme="dark"] img:not([src=""]):not([src^="data:image/svg"]) {
+  filter: invert(111.11%) hue-rotate(180deg) !important;
+}
+
+html[data-booth-theme="dark"] video,
+html[data-booth-theme="dark"] picture source,
+html[data-booth-theme="dark"] canvas {
+  filter: invert(111.11%) hue-rotate(180deg) !important;
+}
+
+// iframeは再反転
+html[data-booth-theme="dark"] iframe {
+  filter: invert(111.11%) hue-rotate(180deg) !important;
+}
+
+// 背景画像を持つ要素
+html[data-booth-theme="dark"] [style*="background-image"] {
+  filter: invert(111.11%) hue-rotate(180deg) !important;
+}
+
+// selectのオプション（ブラウザオーバーレイで描画されフィルター外のため直接指定）
+html[data-booth-theme="dark"] option {
+  background-color: #1a1a1a !important;
+  color: #e0e0e0 !important;
+}
+
+// スクロールバーのスタイル
+html[data-booth-theme="dark"]::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+html[data-booth-theme="dark"]::-webkit-scrollbar-track {
+  background: #1a1d22;
+}
+
+html[data-booth-theme="dark"]::-webkit-scrollbar-thumb {
+  background: #3d4248;
+  border-radius: 6px;
+}
+
+html[data-booth-theme="dark"]::-webkit-scrollbar-thumb:hover {
+  background: #4a5058;
+}

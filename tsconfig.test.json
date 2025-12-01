@@ -1,0 +1,9 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"skipLibCheck": true,
+		"types": ["vitest/globals", "node", "@types/chrome"]
+	},
+	"include": ["tests/**/*.ts", "src/**/*.ts"],
+	"exclude": ["node_modules", ".wxt", ".output"]
+}

@@ -1,0 +1,9 @@
+{
+	"extends": "./.wxt/tsconfig.json",
+	"compilerOptions": {
+		"useDefineForClassFields": true,
+		"types": ["vite/client"]
+	},
+	"include": ["src/**/*", ".wxt/wxt.d.ts"],
+	"exclude": ["tests/**/*", "node_modules", ".output"]
+}

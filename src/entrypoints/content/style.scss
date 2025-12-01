@@ -1,0 +1,34 @@
+/* ================================================
+   パフォーマンス最適化
+   ================================================ */
+
+/* CSS Containment: レイアウト再計算を最適化 */
+.item-card {
+	contain: layout style paint;
+
+	/* GPU加速: ホバーアニメーション用 */
+	&:hover {
+		will-change: transform;
+	}
+
+	&:not(:hover) {
+		will-change: auto;
+	}
+}
+
+.l-cards-5cols {
+	contain: layout;
+}
+
+/* ブロックボタンのスタイルをフォローボタンと同じにする */
+.block-action,
+.unblock-action {
+	/* フォローボタンと同じスタイルを継承 */
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+
+	i {
+		display: inline-block;
+	}
+}

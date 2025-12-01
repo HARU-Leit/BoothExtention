@@ -1,0 +1,50 @@
+# Lefthook Configuration
+# https://github.com/evilmartians/lefthook
+
+# Pre-commit: Run before git commit
+pre-commit:
+  parallel: true
+  commands:
+    # Lint and format check
+    lint:
+      glob: "*.{js,ts,svelte,json,css,scss}"
+      run: bunx biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+      stage_fixed: true
+
+    # TypeScript type checking
+    typecheck:
+      glob: "*.{ts,tsx,svelte}"
+      run: bunx tsc --noEmit
+
+    # Svelte component check
+    svelte-check:
+      glob: "*.svelte"
+      run: bunx svelte-check --tsconfig ./tsconfig.json
+
+# Pre-push: Run before git push
+pre-push:
+  commands:
+    lint-all:
+      run: bun run lint
+    typecheck-all:
+      run: bun run tsc
+
+# Commit-msg: Validate commit message format
+commit-msg:
+  commands:
+    # Conventional commits validation (optional)
+    message-format:
+      run: |
+        commit_msg=$(cat {1})
+        if ! echo "$commit_msg" | grep -qE '^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?: .{1,}$'; then
+          echo "❌ Commit message must follow Conventional Commits format:"
+          echo "   <type>[optional scope]: <description>"
+          echo ""
+          echo "   Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert"
+          echo ""
+          echo "   Examples:"
+          echo "   - feat: add dark mode support"
+          echo "   - fix(ui): resolve button alignment issue"
+          echo "   - docs: update README with installation steps"
+          exit 1
+        fi
