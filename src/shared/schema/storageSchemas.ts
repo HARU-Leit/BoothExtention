@@ -67,3 +67,25 @@ export const boothDarkModeSchema = z.object({
 	enabled: z.boolean(),
 	mode: z.enum(THEME_MODES),
 });
+
+// 価格履歴エントリ
+const priceHistoryEntrySchema = z.object({
+	price: z.number(),
+	checkedAt: nonEmptyString(),
+});
+
+// 追跡商品のスキーマ
+export const trackedItemSchema = z.object({
+	id: nonEmptyString(),
+	name: z.string(),
+	url: nonEmptyString(),
+	priceHistory: z.array(priceHistoryEntrySchema),
+	lastNotifiedPrice: z.union([z.number(), z.null()]),
+});
+
+// 価格トラッカー設定
+export const priceTrackerSettingsSchema = z.object({
+	enabled: z.boolean(),
+	lastCheckedAt: z.union([nonEmptyString(), z.null()]),
+	items: z.array(trackedItemSchema),
+});

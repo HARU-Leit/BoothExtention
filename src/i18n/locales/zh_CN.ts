@@ -59,6 +59,17 @@ export const zh_CN: Translations = translationsSchema.parse({
 		description: "为Booth.pm网站应用深色主题",
 		enable: "为Booth启用深色模式",
 	},
+	priceTracker: {
+		title: "价格追踪",
+		trackedCount: "追踪中",
+		priceDrops: "降价",
+		hint: "从愿望清单页面更新价格",
+		lastChecked: "最后检查",
+		neverChecked: "尚未检查",
+		checkNow: "立即检查",
+		priceDropped: "降价了！",
+		checking: "检查中...",
+	},
 	searchProfiles: {
 		title: "搜索配置",
 		description: "保存一次常用筛选条件，并在店铺列表自动应用。",

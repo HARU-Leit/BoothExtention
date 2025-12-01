@@ -67,6 +67,18 @@ export const ja: Translations = translationsSchema.parse({
 		description: "Booth.pm本体にダークテーマを適用します",
 		enable: "Boothにダークモードを適用",
 	},
+	// 価格トラッカー
+	priceTracker: {
+		title: "価格追跡",
+		trackedCount: "追跡中",
+		priceDrops: "値下げ",
+		hint: "ウィッシュリストページで価格を更新します",
+		lastChecked: "最終チェック",
+		neverChecked: "未チェック",
+		checkNow: "今すぐチェック",
+		priceDropped: "値下げ！",
+		checking: "チェック中...",
+	},
 	searchProfiles: {
 		title: "検索プロファイル",
 		description: "検索条件を保存してBoothの一覧で自動適用します。",

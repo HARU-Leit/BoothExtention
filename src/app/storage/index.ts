@@ -20,6 +20,9 @@ export {
 	type MultiSearchProfileSettings,
 	multiSearchProfiles,
 	type NamedSearchProfile,
+	// 価格トラッカー
+	type PriceTrackerSettings,
+	priceTracker,
 	// 関数
 	readStorageSnapshot,
 	type SearchProfileSettings,

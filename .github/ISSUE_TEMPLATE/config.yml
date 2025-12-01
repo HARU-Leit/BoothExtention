@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 質問・相談
+    url: https://github.com/HARU-Leit/BoothExtention/discussions
+    about: バグでも要望でもない質問はこちらへ

@@ -59,6 +59,17 @@ export const en: Translations = translationsSchema.parse({
 		description: "Apply dark theme to Booth.pm website",
 		enable: "Enable dark mode for Booth",
 	},
+	priceTracker: {
+		title: "Price Tracker",
+		trackedCount: "Tracked",
+		priceDrops: "Price drops",
+		hint: "Updates prices from your wishlist page",
+		lastChecked: "Last checked",
+		neverChecked: "Never checked",
+		checkNow: "Check now",
+		priceDropped: "Price dropped!",
+		checking: "Checking...",
+	},
 	searchProfiles: {
 		title: "Search Profiles",
 		description:

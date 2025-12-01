@@ -21,13 +21,16 @@ export default defineConfig({
 			default_title: "Booth Optimizer",
 		},
 		permissions: [
+			"alarms",
 			"declarativeNetRequest",
 			"declarativeNetRequestWithHostAccess",
+			"notifications",
 			"storage",
 			"tabs",
 		],
 		host_permissions: [
 			"*://*.booth.pm/*",
+			"*://accounts.booth.pm/*",
 			"*://booth.pximg.net/*",
 			"https://*.google-analytics.com/*",
 			"https://*.googletagmanager.com/*",

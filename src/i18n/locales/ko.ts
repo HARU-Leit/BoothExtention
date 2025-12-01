@@ -59,6 +59,17 @@ export const ko: Translations = translationsSchema.parse({
 		description: "Booth.pm 사이트에 다크 테마를 적용합니다",
 		enable: "Booth에 다크 모드 적용",
 	},
+	priceTracker: {
+		title: "가격 추적",
+		trackedCount: "추적 중",
+		priceDrops: "가격 인하",
+		hint: "위시리스트 페이지에서 가격을 업데이트합니다",
+		lastChecked: "마지막 확인",
+		neverChecked: "확인 안 됨",
+		checkNow: "지금 확인",
+		priceDropped: "가격 인하!",
+		checking: "확인 중...",
+	},
 	searchProfiles: {
 		title: "검색 프로필",
 		description:

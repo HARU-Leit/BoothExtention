@@ -65,6 +65,9 @@ export default defineContentScript({
 
 		await app.bootstrap();
 
+		// 価格トラッカーの自動チェック（12時間以上経過していたら発火）
+		void checkPriceTrackerIfNeeded();
+
 		// 拡張機能の更新/無効化時にクリーンアップ
 		ctx?.onInvalidated(() => {
 			logger.info("Content script invalidated, destroying application");
@@ -72,3 +75,12 @@ export default defineContentScript({
 		});
 	},
 });
+
+/** 価格トラッカーの自動チェック */
+async function checkPriceTrackerIfNeeded(): Promise<void> {
+	try {
+		await browser.runtime.sendMessage({ type: "CHECK_PRICE_TRACKER_NEEDED" });
+	} catch {
+		// バックグラウンドへの送信エラーは無視
+	}
+}

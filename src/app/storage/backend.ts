@@ -106,12 +106,12 @@ function createMemoryBackend(): StorageBackend {
 /** WebExtension browser API (Firefox/Edge) 向けバックエンド */
 function createBrowserBackend(): StorageBackend {
 	return {
-		get: (keys) => browser.storage.sync.get(keys),
-		set: (items) => browser.storage.sync.set(items),
+		get: (keys) => browser.storage.local.get(keys),
+		set: (items) => browser.storage.local.set(items),
 		addListener: (listener) => browser.storage.onChanged.addListener(listener),
 		removeListener: (listener) =>
 			browser.storage.onChanged.removeListener(listener),
-		areaName: "sync",
+		areaName: "local",
 	};
 }
 
@@ -121,9 +121,10 @@ function createChromeBackend(): StorageBackend {
 	if (!storageApi) {
 		throw new Error("chrome.storage is not available");
 	}
-	const storageArea = (storageApi.sync ??
-		storageApi.local) as ChromeStorageArea;
-	const areaName = storageApi.sync ? "sync" : "local";
+	// storage.localを優先（syncは8KB/itemの制限があるため）
+	const storageArea = (storageApi.local ??
+		storageApi.sync) as ChromeStorageArea;
+	const areaName = storageApi.local ? "local" : "sync";
 
 	const promisify = <T>(
 		action: (callback: (result: T) => void) => void,
@@ -165,7 +166,7 @@ function createChromeBackend(): StorageBackend {
 /** 実行環境に応じた適切なストレージバックエンドを選択 */
 export function resolveStorageBackend(): StorageBackend {
 	// WebExtension browser API (Firefox, Edge, etc.)
-	if (typeof browser !== "undefined" && browser.storage?.sync) {
+	if (typeof browser !== "undefined" && browser.storage?.local) {
 		return createBrowserBackend();
 	}
 
