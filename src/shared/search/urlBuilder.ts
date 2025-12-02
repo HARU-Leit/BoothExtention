@@ -179,10 +179,6 @@ export function buildAbsoluteSearchUrl(
 	return `${origin}${relative}`;
 }
 
-// ========================================
-// URL とプロファイルの比較用ヘルパー関数群
-// ========================================
-
 /**
  * 配列を正規化
  * @param value - 正規化する配列
@@ -233,11 +229,9 @@ function matchesPathAndKeyword(
 	}
 
 	if (keyword.length === 0) {
-		// キーワードなし → /items ページであるべき
 		return parsed.kind === "items";
 	}
 
-	// キーワードあり → /search/keyword ページで、キーワードが一致するべき
 	return parsed.kind === "search" && parsed.keyword === keyword;
 }
 
@@ -249,7 +243,6 @@ function matchesSort(
 	const sortParam = params.get("sort");
 	const expectedSort = getEffectiveSort(profile);
 
-	// パラメータが無い場合はデフォルト(new)として扱う
 	return (
 		sortParam === expectedSort ||
 		(!sortParam && expectedSort === DEFAULT_SEARCH_SORT)
@@ -266,11 +259,9 @@ function matchesBooleanFlag(
 	const paramValue = params.get(paramName);
 
 	if (profileValue) {
-		// プロファイルが有効 → パラメータも有効であるべき
 		return useTruthy ? isTruthy(paramValue) : paramValue === "true";
 	}
 
-	// プロファイルが無効 → パラメータも無効であるべき
 	return useTruthy ? !isTruthy(paramValue) : paramValue !== "true";
 }
 
@@ -282,11 +273,9 @@ function matchesAdultFilter(
 	const adultParam = params.get("adult");
 
 	if (adult === "absent") {
-		// absent → パラメータが無いべき
 		return adultParam === null;
 	}
 
-	// include/only → パラメータが一致するべき
 	return adultParam === adult;
 }
 
@@ -336,13 +325,11 @@ export function urlMatchesProfile(
 	locale: BoothPathLocale,
 	profile: LanguageSearchProfile,
 ): boolean {
-	// 1. パスの解析
 	const parsed = parseShopListingPath(url.pathname);
 	if (!parsed) {
 		return false;
 	}
 
-	// 2. パスとキーワードの一致
 	const keyword = profile.keyword.trim();
 	if (!matchesPathAndKeyword(parsed, locale, keyword)) {
 		return false;
@@ -350,12 +337,10 @@ export function urlMatchesProfile(
 
 	const params = url.searchParams;
 
-	// 3. ソート順の一致
 	if (!matchesSort(params, profile)) {
 		return false;
 	}
 
-	// 4. ブールフラグの一致
 	if (!matchesBooleanFlag(params, "in_stock", profile.inStockOnly)) {
 		return false;
 	}
@@ -363,12 +348,10 @@ export function urlMatchesProfile(
 		return false;
 	}
 
-	// 5. 年齢制限フィルタの一致
 	if (!matchesAdultFilter(params, profile.adult)) {
 		return false;
 	}
 
-	// 6. 配列パラメータの一致
 	if (!matchesArrayParam(params, "tags[]", profile.tags)) {
 		return false;
 	}
@@ -376,7 +359,6 @@ export function urlMatchesProfile(
 		return false;
 	}
 
-	// 7. 価格パラメータの一致
 	if (!matchesPriceParam(params, "min_price", profile.minPrice)) {
 		return false;
 	}

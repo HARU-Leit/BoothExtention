@@ -29,3 +29,6 @@ web-ext.config.ts
 playwright-report
 test-results
 playwright/.cache
+
+# Coverage
+coverage

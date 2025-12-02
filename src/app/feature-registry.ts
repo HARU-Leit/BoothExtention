@@ -123,7 +123,6 @@ const FEATURE_DEFINITIONS: readonly FeatureDescriptor[] = [
 	},
 ];
 
-// ストレージ状態を見て必要な Feature を優先度順で読み込む
 export async function resolveFeatures(
 	storageNamespace: StorageNamespace,
 ): Promise<Feature[]> {

@@ -2,58 +2,76 @@
  * Booth Dark Theme - Filter Approach
  *
  * CSS filterを使用したシンプルで効果的なダークモード
+ * - invert: 90%でしっかり反転
+ * - contrast: 95%で白飛びを少し抑える
+ * - saturate: 125%で色のくすみを補正（特に赤系）
  */
 
 html[data-booth-theme="dark"] {
-  // 基本フィルター
-  filter: invert(90%) hue-rotate(180deg);
-  background-color: #111 !important;
+  // 基本フィルター - 暗めで落ち着いた見た目
+  filter: invert(90%) hue-rotate(180deg) contrast(95%) saturate(125%);
+  // ダークブルーグレーの背景
+  background-color: #101214 !important;
 }
 
 // 画像・動画・キャンバスは再反転して元に戻す
 // html直下ではなく別セレクターで定義して詳細度を上げる
 // 注: 111.11% = 100 / 90 * 100 (親の90%反転を打ち消すため)
+// 親のcontrast(95%)/saturate(125%)も打ち消す: 100/95=105.26%, 100/125=80%
+$restore-filter: invert(111.11%) hue-rotate(180deg) contrast(105.26%) saturate(80%);
+
 html[data-booth-theme="dark"] img:not([src=""]):not([src^="data:image/svg"]) {
-  filter: invert(111.11%) hue-rotate(180deg) !important;
+  filter: $restore-filter !important;
 }
 
 html[data-booth-theme="dark"] video,
 html[data-booth-theme="dark"] picture source,
 html[data-booth-theme="dark"] canvas {
-  filter: invert(111.11%) hue-rotate(180deg) !important;
+  filter: $restore-filter !important;
 }
 
-// iframeは再反転
-html[data-booth-theme="dark"] iframe {
-  filter: invert(111.11%) hue-rotate(180deg) !important;
+// iframeは再反転（全画面時は除外）
+html[data-booth-theme="dark"] iframe:not(:fullscreen) {
+  filter: $restore-filter !important;
+}
+
+// 全画面要素にはフィルターを適用しない
+html[data-booth-theme="dark"] :fullscreen,
+html[data-booth-theme="dark"] ::backdrop {
+  filter: none !important;
 }
 
 // 背景画像を持つ要素
 html[data-booth-theme="dark"] [style*="background-image"] {
-  filter: invert(111.11%) hue-rotate(180deg) !important;
+  filter: $restore-filter !important;
 }
 
 // selectのオプション（ブラウザオーバーレイで描画されフィルター外のため直接指定）
 html[data-booth-theme="dark"] option {
-  background-color: #1a1a1a !important;
-  color: #e0e0e0 !important;
+  background-color: #1c1e24 !important;
+  color: #e8e8ec !important;
 }
 
-// スクロールバーのスタイル
+// スクロールバーのスタイル - 背景に馴染むダークブルーグレー
 html[data-booth-theme="dark"]::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
 }
 
 html[data-booth-theme="dark"]::-webkit-scrollbar-track {
-  background: #1a1d22;
+  background: #181a20;
 }
 
 html[data-booth-theme="dark"]::-webkit-scrollbar-thumb {
-  background: #3d4248;
-  border-radius: 6px;
-}
+  background: #3a3e48;
+  border-radius: 5px;
+  border: 2px solid #181a20;
 
-html[data-booth-theme="dark"]::-webkit-scrollbar-thumb:hover {
-  background: #4a5058;
+  &:hover {
+    background: #484d58;
+  }
+
+  &:active {
+    background: #565c68;
+  }
 }

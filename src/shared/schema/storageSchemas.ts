@@ -89,3 +89,31 @@ export const priceTrackerSettingsSchema = z.object({
 	lastCheckedAt: z.union([nonEmptyString(), z.null()]),
 	items: z.array(trackedItemSchema),
 });
+
+// ウィッシュリストアイテム（バックグラウンドメッセージ用）
+export const wishlistItemSchema = z.object({
+	id: nonEmptyString(),
+	name: z.string(),
+	url: nonEmptyString(),
+	price: z.number(),
+});
+
+// バックグラウンドメッセージスキーマ
+const wishlistExtractedMessageSchema = z.object({
+	type: z.literal("WISHLIST_ITEMS_EXTRACTED"),
+	items: z.array(wishlistItemSchema),
+});
+
+const checkPriceTrackerNeededMessageSchema = z.object({
+	type: z.literal("CHECK_PRICE_TRACKER_NEEDED"),
+});
+
+const triggerPriceCheckMessageSchema = z.object({
+	type: z.literal("TRIGGER_PRICE_CHECK"),
+});
+
+export const backgroundMessageSchema = z.union([
+	wishlistExtractedMessageSchema,
+	checkPriceTrackerNeededMessageSchema,
+	triggerPriceCheckMessageSchema,
+]);

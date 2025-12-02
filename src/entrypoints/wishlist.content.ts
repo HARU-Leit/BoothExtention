@@ -1,24 +1,14 @@
-/**
- * ウィッシュリストページ用コンテンツスクリプト
- *
- * accounts.booth.pm/wish_lists でウィッシュリストデータを抽出し、
- * バックグラウンドに送信する
- *
- * 自動ページネーション対応：全ページを巡回して収集
- */
-
+import { logger } from "@/shared/core/logger";
 import {
 	extractWishlistItemsFromDOM,
 	sendWishlistToBackground,
 	type WishlistItem,
 } from "@/shared/wishlist";
 
-/** トースト通知を表示 */
 function showToast(
 	message: string,
 	type: "success" | "info" | "progress" = "info",
 ): HTMLDivElement {
-	// 既存のトーストを削除
 	const existingToast = document.getElementById("booth-optimizer-toast");
 	if (existingToast) {
 		existingToast.remove();
@@ -53,8 +43,6 @@ function showToast(
 	`;
 
 	document.body.appendChild(toast);
-
-	// アニメーション開始
 	requestAnimationFrame(() => {
 		toast.style.opacity = "1";
 		toast.style.transform = "translateY(0)";
@@ -63,7 +51,6 @@ function showToast(
 	return toast;
 }
 
-/** トーストを自動で消す */
 function dismissToast(toast: HTMLDivElement, delay = 3000): void {
 	setTimeout(() => {
 		toast.style.opacity = "0";
@@ -72,14 +59,11 @@ function dismissToast(toast: HTMLDivElement, delay = 3000): void {
 	}, delay);
 }
 
-/** ページネーションコンテナを取得 */
 function getPaginationContainer(): HTMLElement | null {
-	// ページネーションは flex items-center justify-center gap-8 を持つコンテナ
 	const containers = document.querySelectorAll(
 		".flex.items-center.justify-center",
 	);
 	for (const container of containers) {
-		// 数字を含む子要素があるかチェック
 		const hasPageNumbers = Array.from(container.children).some((child) =>
 			/^\d+$/.test(child.textContent?.trim() ?? ""),
 		);
@@ -90,7 +74,6 @@ function getPaginationContainer(): HTMLElement | null {
 	return null;
 }
 
-/** 総ページ数を取得 */
 function getTotalPages(): number {
 	const container = getPaginationContainer();
 	if (!container) return 1;
@@ -106,12 +89,10 @@ function getTotalPages(): number {
 	return maxPage;
 }
 
-/** 次のページボタンをクリック */
 function clickNextPage(): boolean {
 	const container = getPaginationContainer();
 	if (!container) return false;
 
-	// ArrowOpenRight アイコンを持つ要素を探す
 	const nextBtn = container.querySelector(
 		'pixiv-icon[name="24/ArrowOpenRight"]',
 	);
@@ -126,7 +107,6 @@ function clickNextPage(): boolean {
 	return false;
 }
 
-/** 特定のページ番号をクリック */
 function clickPageNumber(pageNum: number): boolean {
 	const container = getPaginationContainer();
 	if (!container) return false;
@@ -144,12 +124,10 @@ function clickPageNumber(pageNum: number): boolean {
 	return false;
 }
 
-/** 指定時間待機 */
 function sleep(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-/** DOMの変更を待つ */
 function waitForDOMChange(timeout = 5000): Promise<void> {
 	return new Promise((resolve) => {
 		let resolved = false;
@@ -158,7 +136,6 @@ function waitForDOMChange(timeout = 5000): Promise<void> {
 			if (!resolved) {
 				resolved = true;
 				observer.disconnect();
-				// DOM更新後に少し待ってから解決
 				setTimeout(resolve, 500);
 			}
 		});
@@ -171,7 +148,6 @@ function waitForDOMChange(timeout = 5000): Promise<void> {
 			});
 		}
 
-		// タイムアウト
 		setTimeout(() => {
 			if (!resolved) {
 				resolved = true;
@@ -182,51 +158,38 @@ function waitForDOMChange(timeout = 5000): Promise<void> {
 	});
 }
 
-/** 全ページからアイテムを収集 */
 async function collectAllItems(): Promise<WishlistItem[]> {
 	const allItems = new Map<string, WishlistItem>();
 	const totalPages = getTotalPages();
 
 	if (totalPages === 1) {
-		// 1ページのみの場合はそのまま抽出
-		const items = extractWishlistItemsFromDOM();
-		return items;
+		return extractWishlistItemsFromDOM();
 	}
 
 	const toast = showToast(`価格を更新中... (1/${totalPages})`, "progress");
-
-	// 最初のページの商品を取得
 	let items = extractWishlistItemsFromDOM();
 	for (const item of items) {
 		allItems.set(item.id, item);
 	}
 
-	// 2ページ目以降を巡回
 	for (let page = 2; page <= totalPages; page++) {
-		// 429回避のためページ間で待機（1.5〜2.5秒のランダム）
 		const delay = 1500 + Math.random() * 1000;
 		await sleep(delay);
 
 		toast.textContent = `価格を更新中... (${page}/${totalPages})`;
 
-		// 次のページをクリック
 		const clicked = clickNextPage();
 		if (!clicked) {
-			// 次へボタンがない場合はページ番号を直接クリック
 			clickPageNumber(page);
 		}
 
-		// DOM更新を待つ
 		await waitForDOMChange();
-
-		// 商品を抽出
 		items = extractWishlistItemsFromDOM();
 		for (const item of items) {
 			allItems.set(item.id, item);
 		}
 	}
 
-	// トーストを消す
 	toast.remove();
 
 	return Array.from(allItems.values());
@@ -237,9 +200,7 @@ export default defineContentScript({
 	runAt: "document_idle",
 
 	main() {
-		console.log("[Booth Optimizer] Wishlist content script loaded");
-
-		// バックグラウンドからのトリガーを待つ
+		logger.info("Wishlist content script loaded");
 		browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 			const msg = message as { type?: string };
 			if (msg.type === "TRIGGER_WISHLIST_EXTRACTION") {
@@ -254,9 +215,9 @@ export default defineContentScript({
 async function extractAndSend(): Promise<void> {
 	try {
 		const items = await collectAllItems();
-		console.log(
-			`[Booth Optimizer] Extracted ${items.length} wishlist items from all pages`,
-		);
+		logger.info("Extracted wishlist items from all pages", {
+			count: items.length,
+		});
 
 		if (items.length > 0) {
 			await sendWishlistToBackground(items);
@@ -270,7 +231,7 @@ async function extractAndSend(): Promise<void> {
 			dismissToast(toast);
 		}
 	} catch (error) {
-		console.error("[Booth Optimizer] Failed to extract wishlist:", error);
+		logger.error("Failed to extract wishlist", error);
 		const toast = showToast("価格追跡の登録に失敗しました", "info");
 		dismissToast(toast);
 	}

@@ -35,9 +35,7 @@ async function applyEarlyDarkMode(): Promise<void> {
 			style.textContent = darkModeStyles;
 			(document.head || document.documentElement).appendChild(style);
 		}
-	} catch {
-		// ストレージエラーは無視
-	}
+	} catch {}
 }
 
 export default defineContentScript({
@@ -80,7 +78,5 @@ export default defineContentScript({
 async function checkPriceTrackerIfNeeded(): Promise<void> {
 	try {
 		await browser.runtime.sendMessage({ type: "CHECK_PRICE_TRACKER_NEEDED" });
-	} catch {
-		// バックグラウンドへの送信エラーは無視
-	}
+	} catch {}
 }

@@ -32,13 +32,11 @@ export class SearchProfileStorageItem extends StorageItem<SearchProfileSettings>
 		if (value && typeof value === "object" && !Array.isArray(value)) {
 			const record = value as Record<string, unknown>;
 
-			// 旧形式からのマイグレーション
 			const migrated = this.migrateLegacyProfiles(record);
 			if (migrated) {
 				return migrated;
 			}
 
-			// enabled フィールドが無い場合の補完
 			if (!("enabled" in record) && "profile" in record) {
 				return normalizeSearchProfileSettings(
 					super.parse({ ...record, enabled: true }),
@@ -101,14 +99,12 @@ export class MultiSearchProfileStorageItem extends StorageItem<MultiSearchProfil
 		if (value && typeof value === "object" && !Array.isArray(value)) {
 			const record = value as Record<string, unknown>;
 
-			// 既に新形式の場合
 			if ("profiles" in record && Array.isArray(record.profiles)) {
 				return normalizeMultiProfileSettings(
 					super.parse(value) as MultiSearchProfileSettings,
 				);
 			}
 
-			// 旧形式からのマイグレーション
 			const migrated = this.migrateFromOldFormat(record);
 			if (migrated) {
 				return migrated;
@@ -129,7 +125,6 @@ export class MultiSearchProfileStorageItem extends StorageItem<MultiSearchProfil
 	): MultiSearchProfileSettings | null {
 		const enabled = typeof record.enabled === "boolean" ? record.enabled : true;
 
-		// { enabled, profile } 形式からのマイグレーション
 		if (
 			"profile" in record &&
 			record.profile &&
@@ -140,7 +135,6 @@ export class MultiSearchProfileStorageItem extends StorageItem<MultiSearchProfil
 				...legacyProfile,
 				id: generateProfileId(),
 				name: "Default",
-				// 価格フィールドがない場合の補完
 				minPrice: legacyProfile.minPrice ?? null,
 				maxPrice: legacyProfile.maxPrice ?? null,
 			};
@@ -152,7 +146,6 @@ export class MultiSearchProfileStorageItem extends StorageItem<MultiSearchProfil
 			});
 		}
 
-		// { profiles: { locale: {...} } } 形式からのマイグレーション
 		const legacyProfiles = record.profiles;
 		if (
 			legacyProfiles &&

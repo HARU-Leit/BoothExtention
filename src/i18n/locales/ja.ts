@@ -72,6 +72,7 @@ export const ja: Translations = translationsSchema.parse({
 		title: "価格追跡",
 		trackedCount: "追跡中",
 		priceDrops: "値下げ",
+		priceDropList: "値下げ中の商品",
 		hint: "ウィッシュリストページで価格を更新します",
 		lastChecked: "最終チェック",
 		neverChecked: "未チェック",

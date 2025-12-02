@@ -8,7 +8,7 @@ import { PERFORMANCE, TIMEOUTS } from "@/config/constants";
  * @example
  * ```ts
  * perfProfiler.mark('operation:start');
- * // 処理...
+ * await doExpensiveOperation();
  * perfProfiler.measure('operation:total', 'operation:start');
  * ```
  */

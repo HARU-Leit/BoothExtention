@@ -63,6 +63,7 @@ export const en: Translations = translationsSchema.parse({
 		title: "Price Tracker",
 		trackedCount: "Tracked",
 		priceDrops: "Price drops",
+		priceDropList: "Price dropped items",
 		hint: "Updates prices from your wishlist page",
 		lastChecked: "Last checked",
 		neverChecked: "Never checked",

@@ -57,6 +57,7 @@ export const translationsSchema = z.object({
 		title: z.string(),
 		trackedCount: z.string(),
 		priceDrops: z.string(),
+		priceDropList: z.string(),
 		hint: z.string(),
 		lastChecked: z.string(),
 		neverChecked: z.string(),

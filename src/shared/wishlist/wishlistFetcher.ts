@@ -27,7 +27,6 @@ export interface WishlistFetchResult {
  * parsePrice("¥ 500~") // 500
  */
 function parsePrice(priceText: string): number {
-	// 「~」などの範囲表示を除去し、最小価格を取得
 	const cleaned = priceText.replace(/[¥￥,円\s~～]/g, "");
 	const parsed = Number.parseInt(cleaned, 10);
 	return Number.isNaN(parsed) ? 0 : parsed;
@@ -52,11 +51,9 @@ function extractItemId(url: string): string | null {
 export function extractWishlistItemsFromDOM(): WishlistItem[] {
 	const items: WishlistItem[] = [];
 
-	// item-card-wrapperが各商品カード
 	const cardElements = document.querySelectorAll(".item-card-wrapper");
 
 	for (const card of cardElements) {
-		// 商品URL（最初のリンクから取得）
 		const itemLink =
 			card.querySelector<HTMLAnchorElement>('a[href*="/items/"]');
 		const url = itemLink?.href ?? "";
@@ -64,11 +61,9 @@ export function extractWishlistItemsFromDOM(): WishlistItem[] {
 
 		if (!id) continue;
 
-		// 商品名（line-clamp-2内のテキスト）
 		const nameElement = card.querySelector(".line-clamp-2 .break-all");
 		const name = nameElement?.textContent?.trim() ?? "";
 
-		// 価格（text-primary400クラス）
 		const priceElement = card.querySelector(".text-primary400");
 		const priceText = priceElement?.textContent?.trim() ?? "0";
 		const price = parsePrice(priceText);

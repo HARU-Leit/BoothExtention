@@ -12,7 +12,7 @@ import { domBatcher } from "@/utils/domBatcher";
  * ```ts
  * const grid = await waitForElement('.item-grid', 5000);
  * if (grid) {
- *   // 要素が見つかった
+ *   grid.classList.add('active');
  * }
  * ```
  */

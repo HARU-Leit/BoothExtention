@@ -63,6 +63,7 @@ export const ko: Translations = translationsSchema.parse({
 		title: "가격 추적",
 		trackedCount: "추적 중",
 		priceDrops: "가격 인하",
+		priceDropList: "가격 인하 상품",
 		hint: "위시리스트 페이지에서 가격을 업데이트합니다",
 		lastChecked: "마지막 확인",
 		neverChecked: "확인 안 됨",

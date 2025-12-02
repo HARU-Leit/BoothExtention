@@ -66,7 +66,6 @@ export class SearchProfileFeature extends BaseFeature {
 		}
 
 		const effectiveLocale = pickLocaleForPath(pathname);
-		// アクティブなプロファイルを取得
 		const profile = getActiveProfile(settings);
 		if (!profile) {
 			return;
@@ -87,7 +86,6 @@ export class SearchProfileFeature extends BaseFeature {
 		locale: BoothPathLocale,
 		profile: LanguageSearchProfile,
 	): void {
-		// 呼び出し元で既に urlMatchesProfile をチェック済みなのでここでは不要
 		const targetUrl = buildAbsoluteSearchUrl(locale, profile, { page: 1 });
 		if (this.pendingTargetUrl === targetUrl) {
 			return;

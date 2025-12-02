@@ -63,6 +63,7 @@ export const zh_CN: Translations = translationsSchema.parse({
 		title: "价格追踪",
 		trackedCount: "追踪中",
 		priceDrops: "降价",
+		priceDropList: "降价商品",
 		hint: "从愿望清单页面更新价格",
 		lastChecked: "最后检查",
 		neverChecked: "尚未检查",

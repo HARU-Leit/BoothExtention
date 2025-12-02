@@ -121,7 +121,6 @@ function createChromeBackend(): StorageBackend {
 	if (!storageApi) {
 		throw new Error("chrome.storage is not available");
 	}
-	// storage.localを優先（syncは8KB/itemの制限があるため）
 	const storageArea = (storageApi.local ??
 		storageApi.sync) as ChromeStorageArea;
 	const areaName = storageApi.local ? "local" : "sync";
@@ -165,17 +164,14 @@ function createChromeBackend(): StorageBackend {
 
 /** 実行環境に応じた適切なストレージバックエンドを選択 */
 export function resolveStorageBackend(): StorageBackend {
-	// WebExtension browser API (Firefox, Edge, etc.)
 	if (typeof browser !== "undefined" && browser.storage?.local) {
 		return createBrowserBackend();
 	}
 
-	// Chrome 拡張 API
 	if (typeof chrome !== "undefined" && chrome.storage) {
 		return createChromeBackend();
 	}
 
-	// フォールバック: メモリストレージ（テスト環境など）
 	logger.warn(
 		"Storage API is not available; falling back to in-memory storage backend",
 	);

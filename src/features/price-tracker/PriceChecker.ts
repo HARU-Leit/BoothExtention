@@ -26,7 +26,6 @@ function addPriceHistory(
 	const cutoffDate = new Date();
 	cutoffDate.setDate(cutoffDate.getDate() - MAX_HISTORY_DAYS);
 
-	// 古いエントリを除去して新しいエントリを追加
 	const filtered = history.filter((entry) => {
 		const entryDate = new Date(entry.checkedAt);
 		return entryDate > cutoffDate;
@@ -131,10 +130,8 @@ export function updateTrackedItems(
 		const stored = storedMap.get(current.id);
 
 		if (stored) {
-			// 既存のアイテムを更新
 			updatedItems.push(updateTrackedItem(stored, current));
 		} else {
-			// 新しいアイテムを追加
 			updatedItems.push(createTrackedItem(current));
 		}
 	}
@@ -179,7 +176,6 @@ export function markAsNotified(
 export function filterUnnotifiedChanges(changes: PriceChange[]): PriceChange[] {
 	return changes.filter((change) => {
 		const { item, newPrice } = change;
-		// 通知済み価格と同じ場合はスキップ
 		if (item.lastNotifiedPrice !== null && item.lastNotifiedPrice <= newPrice) {
 			return false;
 		}
