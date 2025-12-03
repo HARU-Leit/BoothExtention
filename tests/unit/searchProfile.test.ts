@@ -203,14 +203,17 @@ describe("buildRelativeSearchUrl", () => {
 	});
 
 	describe("ロケール", () => {
-		it.each(["ja", "en", "ko", "zh-cn", "zh-tw"] as const)(
-			"ロケール '%s' でパスを生成",
-			(locale) => {
-				const profile = cloneProfile();
-				const relative = buildRelativeSearchUrl(locale, profile);
-				expect(relative).toBe(`/${locale}/items`);
-			},
-		);
+		it.each([
+			"ja",
+			"en",
+			"ko",
+			"zh-cn",
+			"zh-tw",
+		] as const)("ロケール '%s' でパスを生成", (locale) => {
+			const profile = cloneProfile();
+			const relative = buildRelativeSearchUrl(locale, profile);
+			expect(relative).toBe(`/${locale}/items`);
+		});
 	});
 
 	describe("複合条件", () => {
@@ -272,13 +275,16 @@ describe("parseShopListingPath", () => {
 			});
 		});
 
-		it.each(["ja", "en", "ko", "zh-cn", "zh-tw"] as const)(
-			"ロケール '%s' を正しく検出",
-			(locale) => {
-				const result = parseShopListingPath(`/${locale}/items`);
-				expect(result?.locale).toBe(locale);
-			},
-		);
+		it.each([
+			"ja",
+			"en",
+			"ko",
+			"zh-cn",
+			"zh-tw",
+		] as const)("ロケール '%s' を正しく検出", (locale) => {
+			const result = parseShopListingPath(`/${locale}/items`);
+			expect(result?.locale).toBe(locale);
+		});
 
 		it("末尾スラッシュありでもパース可能", () => {
 			const result = parseShopListingPath("/ja/items/");

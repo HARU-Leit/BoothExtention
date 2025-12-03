@@ -1,0 +1,59 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build and zip for Chrome
+        run: |
+          bun run build
+          bun run zip
+
+      - name: Build and zip for Firefox
+        run: |
+          bun run build:firefox
+          bun run zip:firefox
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            .output/*.zip
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          name: Release v${{ steps.get_version.outputs.VERSION }}
+          body: |
+            ## ⚠️ 注意事項
+
+            **Firefox版は現在テストされていません。**
+            Chrome版のみ動作確認済みです。Firefox版をご利用の際は自己責任でお願いします。
+
+            ---
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
