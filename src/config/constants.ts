@@ -14,13 +14,6 @@ export const SELECTORS = {
 	SIDEBAR: "#js-detail-search-sidebar",
 	FOOTER: ".footer__menu",
 	HEADER: "header",
-	// ウィッシュリストページ用
-	WISHLIST_ITEM: ".wish-item",
-	WISHLIST_ITEM_LINK: ".wish-item a[href*='/items/']",
-	WISHLIST_ITEM_NAME: ".wish-item__name",
-	WISHLIST_ITEM_PRICE: ".wish-item__price",
-	WISHLIST_ITEM_SHOP: ".wish-item__shop-name",
-	WISHLIST_ITEM_THUMBNAIL: ".wish-item__thumbnail img",
 } as const;
 
 /** 拡張機能が生成する要素のクラス名 */
