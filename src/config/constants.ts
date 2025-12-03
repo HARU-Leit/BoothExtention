@@ -41,7 +41,6 @@ export const STORAGE_KEYS = {
 	MULTI_SEARCH_PROFILES: "multiSearchProfiles",
 	THEME_MODE: "themeMode",
 	BOOTH_DARK_MODE: "boothDarkMode",
-	PRICE_TRACKER: "priceTracker",
 } as const;
 
 /** テーマモードオプション */

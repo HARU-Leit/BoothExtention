@@ -14,3 +14,8 @@ export const infiniteScrollConfigSchema = z.object({
 	threshold: z.number().check(z.minimum(0)),
 	enabled: z.boolean(),
 });
+
+export const trackingBlockerConfigSchema = z.object({
+	blockList: z.array(z.string()),
+	enabled: z.boolean(),
+});

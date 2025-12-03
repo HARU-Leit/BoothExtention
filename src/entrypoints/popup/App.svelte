@@ -16,7 +16,6 @@ import type {
 	HiddenSections,
 	MultiSearchProfileSettings,
 	NamedSearchProfile,
-	PriceTrackerSettings,
 	ThemeMode,
 } from "@/app/storage";
 import {
@@ -26,7 +25,6 @@ import {
 	hiddenSections,
 	infiniteScrollEnabled,
 	multiSearchProfiles as multiSearchProfilesStore,
-	priceTracker as priceTrackerStore,
 	themeMode as themeModeStore,
 } from "@/app/storage";
 import { TIMEOUTS } from "@/config/constants";
@@ -44,7 +42,6 @@ import {
 import { isBoothDomain } from "@/shared/url";
 import { t } from "@/utils/i18n";
 import BlockedShopsSection from "./components/BlockedShopsSection.svelte";
-import PriceTrackerSection from "./components/PriceTrackerSection.svelte";
 import SearchProfileSection from "./components/SearchProfileSection.svelte";
 import SectionHiderSection from "./components/SectionHiderSection.svelte";
 import SettingsSection from "./components/SettingsSection.svelte";
@@ -73,12 +70,6 @@ let lastSectionsSnapshot: HiddenSections | null = null;
 let currentTheme = $state<ThemeMode>("system");
 let boothDarkModeEnabled = $state(false);
 let boothDarkModeMode = $state<ThemeMode>("system");
-let priceTrackerSettings = $state<PriceTrackerSettings>({
-	enabled: true,
-	lastCheckedAt: null,
-	items: [],
-});
-let isPriceChecking = $state(false);
 
 // ========================
 // ブラウザAPI型定義
@@ -293,7 +284,6 @@ onMount(async () => {
 		multiProfilesResult,
 		themeModeResult,
 		boothDarkModeResult,
-		priceTrackerResult,
 	] = await Promise.all([
 		blockedShops.getValue(),
 		autoRedirectToSearch.getValue(),
@@ -302,7 +292,6 @@ onMount(async () => {
 		multiSearchProfilesStore.getValue(),
 		themeModeStore.getValue(),
 		boothDarkModeStore.getValue(),
-		priceTrackerStore.getValue(),
 	]);
 
 	blocked = blockedResult;
@@ -340,9 +329,6 @@ onMount(async () => {
 	// Boothダークモード設定を読み込む
 	boothDarkModeEnabled = boothDarkModeResult.enabled;
 	boothDarkModeMode = boothDarkModeResult.mode;
-
-	// 価格トラッカー設定を読み込む
-	priceTrackerSettings = priceTrackerResult;
 
 	// 初期化完了フラグを立てる
 	initialized = true;
@@ -512,34 +498,6 @@ function handleProfileNameChange(name: string): void {
 	};
 }
 
-/** 価格トラッカーの有効/無効を切り替え */
-async function handlePriceTrackerToggle(enabled: boolean): Promise<void> {
-	priceTrackerSettings = { ...priceTrackerSettings, enabled };
-	await priceTrackerStore.setValue(priceTrackerSettings);
-}
-
-/** 手動で価格チェックを実行（バックグラウンドにトリガー） */
-async function handleCheckPricesNow(): Promise<void> {
-	if (isPriceChecking) return;
-	isPriceChecking = true;
-
-	try {
-		// バックグラウンドに価格チェックをトリガー
-		if (extensionBrowser?.runtime?.sendMessage) {
-			await extensionBrowser.runtime.sendMessage({
-				type: "TRIGGER_PRICE_CHECK",
-			});
-		} else if (chromeAPI?.runtime?.sendMessage) {
-			chromeAPI.runtime.sendMessage({ type: "TRIGGER_PRICE_CHECK" });
-		}
-	} finally {
-		// 少し待ってからボタン状態をリセット
-		setTimeout(() => {
-			isPriceChecking = false;
-		}, 2000);
-	}
-}
-
 /** URLがBooth.pmドメインかどうかを判定 */
 function isBoothUrl(url: string | null | undefined): boolean {
 	if (!url) return false;
@@ -661,14 +619,6 @@ async function reloadActiveBoothTab(): Promise<void> {
 			onReset={resetProfileDraft}
 		/>
 	{/if}
-
-		<!-- 価格トラッカー -->
-		<PriceTrackerSection
-			settings={priceTrackerSettings}
-			onToggleEnabled={handlePriceTrackerToggle}
-			onCheckNow={handleCheckPricesNow}
-			isChecking={isPriceChecking}
-		/>
 
 		<!-- セクション非表示 -->
 		<SectionHiderSection

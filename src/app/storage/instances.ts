@@ -6,7 +6,6 @@ import {
 	boothDarkModeSchema,
 	hiddenSectionsSchema,
 	multiSearchProfileSettingsSchema,
-	priceTrackerSettingsSchema,
 	searchProfileSettingsSchema,
 	themeModeSchema,
 } from "@/shared/schema";
@@ -17,11 +16,7 @@ import {
 	type NamedSearchProfile,
 	type SearchProfileSettings,
 } from "@/shared/search";
-import type {
-	BlockedShop,
-	HiddenSections,
-	PriceTrackerSettings,
-} from "@/types";
+import type { BlockedShop, HiddenSections } from "@/types";
 import { storageBackend } from "./backend";
 import { StorageItem } from "./item";
 import {
@@ -34,7 +29,6 @@ export type {
 	HiddenSections,
 	MultiSearchProfileSettings,
 	NamedSearchProfile,
-	PriceTrackerSettings,
 	SearchProfileSettings,
 };
 
@@ -104,20 +98,6 @@ export const boothDarkMode = new StorageItem<BoothDarkModeSettings>(
 	boothDarkModeSchema,
 );
 
-/** 価格トラッカーのデフォルト設定 */
-const defaultPriceTrackerSettings: PriceTrackerSettings = {
-	enabled: true,
-	lastCheckedAt: null,
-	items: [],
-};
-
-/** 価格トラッカー設定 */
-export const priceTracker = new StorageItem<PriceTrackerSettings>(
-	STORAGE_KEYS.PRICE_TRACKER,
-	defaultPriceTrackerSettings,
-	priceTrackerSettingsSchema,
-);
-
 /** 全ストレージアイテムをまとめた名前空間 */
 export const storage = {
 	blockedShops,
@@ -128,7 +108,6 @@ export const storage = {
 	multiSearchProfiles,
 	themeMode,
 	boothDarkMode,
-	priceTracker,
 } as const;
 
 export type StorageNamespace = typeof storage;
@@ -177,9 +156,6 @@ export async function readStorageSnapshot(
 			boothDarkMode: namespace.boothDarkMode.fromRaw(
 				rawValues[STORAGE_KEYS.BOOTH_DARK_MODE],
 			),
-			priceTracker: namespace.priceTracker.fromRaw(
-				rawValues[STORAGE_KEYS.PRICE_TRACKER],
-			),
 		} satisfies StorageSnapshot;
 	}
 
@@ -193,7 +169,6 @@ export async function readStorageSnapshot(
 		multiSearchProfilesValue,
 		themeModeValue,
 		boothDarkModeValue,
-		priceTrackerValue,
 	] = await Promise.all([
 		namespace.blockedShops.getValue(),
 		namespace.autoRedirectToSearch.getValue(),
@@ -203,7 +178,6 @@ export async function readStorageSnapshot(
 		namespace.multiSearchProfiles.getValue(),
 		namespace.themeMode.getValue(),
 		namespace.boothDarkMode.getValue(),
-		namespace.priceTracker.getValue(),
 	]);
 
 	return {
@@ -215,6 +189,5 @@ export async function readStorageSnapshot(
 		multiSearchProfiles: multiSearchProfilesValue,
 		themeMode: themeModeValue,
 		boothDarkMode: boothDarkModeValue,
-		priceTracker: priceTrackerValue,
 	} satisfies StorageSnapshot;
 }

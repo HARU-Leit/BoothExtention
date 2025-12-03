@@ -16,8 +16,6 @@ export {
 	type MultiSearchProfileSettings,
 	multiSearchProfiles,
 	type NamedSearchProfile,
-	type PriceTrackerSettings,
-	priceTracker,
 	readStorageSnapshot,
 	type SearchProfileSettings,
 	type StorageNamespace,
